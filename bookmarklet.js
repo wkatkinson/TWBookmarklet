@@ -11,7 +11,7 @@ javascript:(function() {
     let p1requestSuccess = false;
     
 
-    let tripleHeadlessDetected = typeof window.TripleHeadless !== 'undefined';
+    let tripleHeadlessDetected = (typeof window.TripleHeadless !== 'undefined' || (typeof window.TriplePixelData !== 'undefined' && window.TriplePixelData.isHeadless == true));    
     let triplePixelEndpoint= "https://open.pixel.api.whale3.io/trek/add";
     let triplePixelV2eventEndpoint = "https://api.config-security.com/event";
     let triplePixelV2monkeyIdEndpoint = "https://api.config-security.com/model";
@@ -50,8 +50,9 @@ javascript:(function() {
             message+="\n\n=== PIXEL INSTALLATION ===";
             message+="\nPixel Snippet Installation: Triple Pixel is detected.";
             message+="\nPixel Version: " + triplePixelVersion;
+            message+="\nSnippet Version: " +(TriplePixelData.isHeadless == false ? "Standard Snippet" : "Headless Snippet");
             message+="\nPixel Shop URL: " + triplePixelShopUrl; 
-            message+="\n\n[ Pixel Snippet Installation GOOD ]";
+            message+="\n\n[ Pixel Snippet Installation " + (tripleHeadlessDetected == true ? "WARNING - Headless snippet used on non-headless page ]" : "GOOD ]");
         } else if (!triplePixelData && triplePixelState) {
             message = "=== SHOP INFO ===";
             message+="\nShopify Installation: Page is hosted by Shopify.";
@@ -69,15 +70,15 @@ javascript:(function() {
             message+="\nPixel Version: Pre-v.1.8";
             message+="\n\n[ Pixel Snippet Installation GOOD ]";
         }
-    } else if (triplePixelDetected && tripleHeadlessDetected) {
+    } else if (triplePixelDetected && !shopifyDetected && tripleHeadlessDetected) {
         if (triplePixelData) {
             message = "=== SHOP INFO ===";
             message+="\nShopify Installation: Headless, Third-Party, or Non-Shopify Page.";
             message+="\n\n=== PIXEL INSTALLATION ===";
             message+="\nPixel Snippet Installation: Triple Pixel is detected.";
             message+="\nPixel Version: " + triplePixelVersion;
-            message+="\nHeadless Snippet: Detected.";
-            message+="\nPixel Shop URL (TripleHeadless): " + window.TripleHeadless;
+            message+="\nSnippet Version: Headless Snippet";
+            message+="\nPixel Shop URL: " + TriplePixelData.TripleName;
             message+="\n\n[ Pixel Snippet Installation GOOD ]";
         } else if (!triplePixelData && triplePixelState) {
                 message = "=== SHOP INFO ===";
@@ -86,7 +87,7 @@ javascript:(function() {
                 message+="\nPixel Snippet Installation: Triple Pixel is detected.";
                 message+="\nPixel Version: v2 Thank You Snippet";
                 message+="\nHeadless Snippet: Detected.";
-                message+="\nPixel Shop URL (TripleHeadless): " + window.TripleHeadless;
+                message+="\nPixel Shop URL: " + triplePixelShopUrl;
                 message+="\n\n[ Pixel Snippet Installation GOOD ]";
         } else {
             message = "=== SHOP INFO ===";
@@ -98,7 +99,7 @@ javascript:(function() {
             message+="\nPixel Shop URL (TripleHeadless): " + window.TripleHeadless;
             message+="\n\n[ Pixel Snippet Installation GOOD ]";
         }
-    } else if (triplePixelDetected && !shopifyDetected) {
+    } else if (triplePixelDetected && !shopifyDetected && !tripleHeadlessDetected) {
         if (triplePixelData) {
             message = "=== SHOP INFO ===";
             message+="\nShopify Installation: Headless, Third-Party, or Non-Shopify Page.";
