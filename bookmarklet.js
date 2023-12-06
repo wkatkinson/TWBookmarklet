@@ -50,7 +50,7 @@ javascript:(function() {
             message+="\n\n=== PIXEL INSTALLATION ===";
             message+="\nPixel Snippet Installation: Triple Pixel is detected.";
             message+="\nPixel Version: " + triplePixelVersion;
-            message+="\nSnippet Version: " +(TriplePixelData.isHeadless == false ? "Standard Snippet" : "Headless Snippet");
+            message+="\nSnippet Version: " +(window.TriplePixelData.isHeadless == false || typeof window.TriplePixelData.isHeadless == 'undefined' ? "Standard Snippet" : "Headless Snippet");
             message+="\nPixel Shop URL: " + triplePixelShopUrl; 
             message+="\n\n[ Pixel Snippet Installation " + (tripleHeadlessDetected == true ? "WARNING - Headless snippet used on non-headless page ]" : "GOOD ]");
         } else if (!triplePixelData && triplePixelState) {
@@ -78,7 +78,7 @@ javascript:(function() {
             message+="\nPixel Snippet Installation: Triple Pixel is detected.";
             message+="\nPixel Version: " + triplePixelVersion;
             message+="\nSnippet Version: Headless Snippet";
-            message+="\nPixel Shop URL: " + TriplePixelData.TripleName;
+            message+="\nPixel Shop URL: " + window.TriplePixelData.TripleName;
             message+="\n\n[ Pixel Snippet Installation GOOD ]";
         } else if (!triplePixelData && triplePixelState) {
                 message = "=== SHOP INFO ===";
