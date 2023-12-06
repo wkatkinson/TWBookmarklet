@@ -9,6 +9,7 @@ javascript:(function() {
     let ShopifyTheme = typeof window.Shopify !== 'undefined' && window.Shopify.theme && window.Shopify.theme.name;
     let p1requestDetected = false;
     let p1requestSuccess = false;
+    let v1ThankYouSnippetDetected = false;
     
 
     let tripleHeadlessDetected = (typeof window.TripleHeadless !== 'undefined' || (typeof window.TriplePixelData !== 'undefined' && window.TriplePixelData.isHeadless == true));    
@@ -16,6 +17,13 @@ javascript:(function() {
     let triplePixelV2eventEndpoint = "https://api.config-security.com/event";
     let triplePixelV2monkeyIdEndpoint = "https://api.config-security.com/model";
     var message = '';
+
+    let scripts = document.getElementsByTagName('script');
+    for (var i = 0; i < scripts.length; i++) {
+        if (scripts[i].src.includes('triplewhale-pixel.web.app/dot1.9.js')) {
+            v1ThankYouSnippetDetected = true;
+        }
+    }
 
     if (window.performance && window.performance.getEntriesByType) {
         var requests = window.performance.getEntriesByType("resource");
@@ -60,6 +68,14 @@ javascript:(function() {
             message+="\nPixel Snippet Installation: Triple Pixel is detected.";
             message+="\nPixel Version: v2 Thank You Snippet";
             message+="\n\n[ Pixel Snippet Installation GOOD ]";
+        } else if (v1ThankYouSnippetDetected==true) {
+            message = "=== SHOP INFO ===";
+            message+="\nShopify Installation: Page is Hosted by Shopify.";
+            message+="\n\n=== PIXEL INSTALLATION ===";
+            message+="\nPixel Snippet Installation: Triple Pixel is detected.";
+            message+="\nPixel Version: v1 Thank You Snippet";
+            message+="\n\n[ Pixel Snippet Installation GOOD ]";
+            
         } else {
             message = "=== SHOP INFO ===";
             message+="\nShopify Installation: Page is hosted by Shopify.";
