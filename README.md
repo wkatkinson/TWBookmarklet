@@ -7,8 +7,8 @@ To add bookmarklet:
 - Select Bookmarks > Bookmark Manager
 - Add New Bookmark...
 - Paste the following in your bookmark URL:
-```javascript:(function (){document.getElementsByTagName('head')[0].appendChild(document.createElement('script')).src='https://wkatkinson.github.io/TWBookmarklet/bookmarklet.js';}());
-```
+> javascript:(function (){document.getElementsByTagName('head')[0].appendChild(document.createElement('script')).src='https://wkatkinson.github.io/TWBookmarklet/bookmarklet.js';}());
+
 - Give it a name and click "Save Bookmark"
 - Add to Your Toolbar
 
