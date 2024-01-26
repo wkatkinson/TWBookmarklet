@@ -7,12 +7,18 @@ javascript:(function() {
     let triplePixelState = typeof window.TriplePixel !== 'undefined' && window.TriplePixel('state');
     let shopifyShop = typeof window.Shopify !== 'undefined' && window.Shopify.shop;
     let ShopifyTheme = typeof window.Shopify !== 'undefined' && window.Shopify.theme && window.Shopify.theme.name;
+    let legacyRequestDetected = false;
+    let legacyRequestSuccess = false;
     let p1requestDetected = false;
     let p1requestSuccess = false;
+    let p2EventrequestDetected = false;
+    let p2EventrequestSuccess = false;
     let v1ThankYouSnippetDetected = false;
+    let TriplePixelExtensionDetected = typeof window.TripleWhalePixelExtensionId !== 'undefined';
     
 
     let tripleHeadlessDetected = (typeof window.TripleHeadless !== 'undefined' || (typeof window.TriplePixelData !== 'undefined' && window.TriplePixelData.isHeadless == true));    
+    let legacyPixelRequest="https://triplewhale-pixel.web.app/triplepx.txt";
     let triplePixelEndpoint= "https://open.pixel.api.whale3.io/trek/add";
     let triplePixelV2eventEndpoint = "https://api.config-security.com/event";
     let triplePixelV2monkeyIdEndpoint = "https://api.config-security.com/model";
@@ -44,10 +50,32 @@ javascript:(function() {
                     if (requests[i].responseStatus && requests[i].responseStatus === 200) {
                         p2MonkeyIdrequestSuccess = true;
                     }
+                } else if (requests[i].name.includes(legacyPixelRequest)) {
+                    legacyRequestDetected = true;
+                    if (requests[i].responseStatus && requests[i].responseStatus === 200) {
+                        legacyRequestSuccess = true;
+                    }
                 }
             }
         }
     }
+
+    function findSpecificComment(element, commentText) {
+        for (var i = 0; i < element.childNodes.length; i++) {
+            var node = element.childNodes[i];
+            if (node.nodeType === Node.COMMENT_NODE && node.nodeValue.includes(commentText)) {
+                return node;
+            } else {
+                var result = findSpecificComment(node, commentText);
+                if (result) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+    
+    var appBlockComment = findSpecificComment(document, 'BEGIN app block: shopify://apps/triplewhale/blocks/triple_pixel_snippet');
 
     if (triplePixelDetected && shopifyDetected) {
         if (triplePixelData) {
@@ -56,18 +84,32 @@ javascript:(function() {
             message+="\nShopify Theme: " + ShopifyTheme;
             message+="\nShopify URL: " + shopifyShop;
             message+="\n\n=== PIXEL INSTALLATION ===";
-            message+="\nPixel Snippet Installation: Triple Pixel is detected.";
+            if(typeof appBlockComment != null){
+                message+="\nPixel Snippet Installation: Triple Pixel App Embed Detected.";
+            } else {
+                message+="\nPixel Snippet Installation: Triple Pixel is detected.";
+            }
             message+="\nPixel Version: " + triplePixelVersion;
-            message+="\nSnippet Version: " +(window.TriplePixelData.isHeadless == false || typeof window.TriplePixelData.isHeadless == 'undefined' ? "Standard Snippet" : "Headless Snippet");
+            message+="\nSnippet Version: " +(window.TriplePixelData.isHeadless == false || typeof window.TriplePixelData.isHeadless == 'undefined' ? (triplePixelVersion == '2.14' ? "Theme App Embed" : "Standard Snippet") : "Headless Snippet");
             message+="\nPixel Shop URL: " + triplePixelShopUrl; 
             message+="\n\n[ Pixel Snippet Installation " + (tripleHeadlessDetected == true ? "WARNING - Headless snippet used on non-headless page ]" : "GOOD ]");
         } else if (!triplePixelData && triplePixelState) {
-            message = "=== SHOP INFO ===";
+            if (legacyPixelRequest) {
+                message = "=== SHOP INFO ===";
             message+="\nShopify Installation: Page is hosted by Shopify.";
             message+="\n\n=== PIXEL INSTALLATION ===";
             message+="\nPixel Snippet Installation: Triple Pixel is detected.";
-            message+="\nPixel Version: v2 Thank You Snippet";
+            message+="\nPixel Version: Pre-v1.8";
+            message+="\nSnippet Version: Standard (Legacy .txt Snippet)";
             message+="\n\n[ Pixel Snippet Installation GOOD ]";
+            } else {
+                message = "=== SHOP INFO ===";
+                message+="\nShopify Installation: Page is hosted by Shopify.";
+                message+="\n\n=== PIXEL INSTALLATION ===";
+                message+="\nPixel Snippet Installation: Triple Pixel is detected.";
+                message+="\nPixel Version: v2 Thank You Snippet";
+                message+="\n\n[ Pixel Snippet Installation GOOD ]";
+            }
         } else if (v1ThankYouSnippetDetected==true) {
             message = "=== SHOP INFO ===";
             message+="\nShopify Installation: Page is Hosted by Shopify.";
