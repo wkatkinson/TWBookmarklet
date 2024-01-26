@@ -12,4 +12,4 @@ To add bookmarklet:
 - Give it a name and click "Save Bookmark"
 - Add to Your Toolbar
 
-Now you can click the bookmark to check for the Triple Whale Pixel and detect version and requests for debugging.
+Now you can click the bookmark on any webpage to check for the Triple Whale Pixel and detect version and requests for debugging.
