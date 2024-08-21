@@ -3,10 +3,7 @@ javascript:(function() {
     let triplePixelData = typeof window.TriplePixelData !== 'undefined' && window.TriplePixelData;
     let triplePixelShopUrl = typeof window.TriplePixelData !== 'undefined' && window.TriplePixelData.TripleName;
     let triplePixelVersion = typeof window.TriplePixelData !== 'undefined' && window.TriplePixelData.ver;
-    let shopifyDetected = typeof window.Shopify !== 'undefined';
     let triplePixelState = typeof window.TriplePixel !== 'undefined' && window.TriplePixel('state');
-    let shopifyShop = typeof window.Shopify !== 'undefined' && window.Shopify.shop;
-    let ShopifyTheme = typeof window.Shopify !== 'undefined' && window.Shopify.theme && window.Shopify.theme.name;
     let legacyRequestDetected = false;
     let legacyRequestSuccess = false;
     let p1requestDetected = false;
@@ -15,13 +12,19 @@ javascript:(function() {
     let p2EventrequestSuccess = false;
     let v1ThankYouSnippetDetected = false;
     let TriplePixelExtensionDetected = typeof window.TripleWhalePixelExtensionId !== 'undefined';
-    
-
     let tripleHeadlessDetected = (typeof window.TripleHeadless !== 'undefined' || (typeof window.TriplePixelData !== 'undefined' && window.TriplePixelData.isHeadless == true));    
     let legacyPixelRequest="https://triplewhale-pixel.web.app/triplepx.txt";
     let triplePixelEndpoint= "https://open.pixel.api.whale3.io/trek/add";
     let triplePixelV2eventEndpoint = "https://api.config-security.com/event";
     let triplePixelV2monkeyIdEndpoint = "https://api.config-security.com/model";
+
+    let shopifyDetected = typeof window.Shopify !== 'undefined';
+    let shopifyShop = typeof window.Shopify !== 'undefined' && window.Shopify.shop;
+    let ShopifyTheme = typeof window.Shopify !== 'undefined' && window.Shopify.theme && window.Shopify.theme.name;
+
+    let bigCommerceDetected = typeof window.stencilBootstrap !== 'undefined';
+    let bigCommerceShop = typeof window.consentManagerStoreConfig !== 'undefined' && window.consentManagerStoreConfig.storeName;
+
     var message = '';
 
     let scripts = document.getElementsByTagName('script');
@@ -77,121 +80,172 @@ javascript:(function() {
     
     var appBlockComment = findSpecificComment(document, 'BEGIN app block: shopify://apps/triplewhale/blocks/triple_pixel_snippet');
 
-    if (triplePixelDetected && shopifyDetected) {
-        if (triplePixelData) {
-            message = "=== SHOP INFO ===";
-            message+="\nShopify Installation: Page is hosted by Shopify.";
-            message+="\nShopify Theme: " + ShopifyTheme;
-            message+="\nShopify URL: " + shopifyShop;
-            message+="\n\n=== PIXEL INSTALLATION ===";
-            if(typeof appBlockComment != null){
-                message+="\nPixel Snippet Installation: Triple Pixel App Embed Detected.";
-            } else {
-                message+="\nPixel Snippet Installation: Triple Pixel is detected.";
-            }
-            message+="\nPixel Version: " + triplePixelVersion;
-            message+="\nSnippet Version: " +(window.TriplePixelData.isHeadless == false || typeof window.TriplePixelData.isHeadless == 'undefined' ? (triplePixelVersion == '2.14' ? "Theme App Embed" : "Standard Snippet") : "Headless Snippet");
-            message+="\nPixel Shop URL: " + triplePixelShopUrl; 
-            message+="\n\n[ Pixel Snippet Installation " + (tripleHeadlessDetected == true ? "WARNING - Headless snippet used on non-headless page ]" : "GOOD ]");
-        } else if (!triplePixelData && triplePixelState) {
-            if (legacyPixelRequest) {
+    if (triplePixelDetected) {
+        if (shopifyDetected) {
+            if (triplePixelData) {
                 message = "=== SHOP INFO ===";
-            message+="\nShopify Installation: Page is hosted by Shopify.";
-            message+="\n\n=== PIXEL INSTALLATION ===";
-            message+="\nPixel Snippet Installation: Triple Pixel is detected.";
-            message+="\nPixel Version: Pre-v1.8";
-            message+="\nSnippet Version: Standard (Legacy .txt Snippet)";
-            message+="\n\n[ Pixel Snippet Installation GOOD ]";
-            } else {
-                message = "=== SHOP INFO ===";
-                message+="\nShopify Installation: Page is hosted by Shopify.";
+                message+="\nPlatform: Page is hosted by Shopify.";
+                message+="\nShopify Theme: " + ShopifyTheme;
+                message+="\nShopify URL: " + shopifyShop;
+                message+="\n\n=== PIXEL INSTALLATION ===";
+                if(typeof appBlockComment != null){
+                    message+="\nPixel Snippet Installation: Triple Pixel App Embed Detected.";
+                } else {
+                    message+="\nPixel Snippet Installation: Triple Pixel is detected.";
+                }
+                message+="\nPixel Version: " + triplePixelVersion;
+                message+="\nSnippet Version: " +(window.TriplePixelData.isHeadless == false || typeof window.TriplePixelData.isHeadless == 'undefined' ? (triplePixelVersion == '2.14' ? "Theme App Embed" : "Standard Snippet") : "Headless Snippet");
+                message+="\nPixel Shop URL: " + triplePixelShopUrl; 
+                message+="\n\n[ Pixel Snippet Installation " + (tripleHeadlessDetected == true ? "WARNING - Headless snippet used on non-headless page ]" : "GOOD ]");
+            } else if (!triplePixelData && triplePixelState) {
+                if (legacyPixelRequest) {
+                    message = "=== SHOP INFO ===";
+                message+="\nPlatform: Page is hosted by Shopify.";
                 message+="\n\n=== PIXEL INSTALLATION ===";
                 message+="\nPixel Snippet Installation: Triple Pixel is detected.";
-                message+="\nPixel Version: v2 Thank You Snippet";
+                message+="\nPixel Version: Pre-v1.8";
+                message+="\nSnippet Version: Standard (Legacy .txt Snippet)";
+                message+="\n\n[ Pixel Snippet Installation GOOD ]";
+                } else {
+                    message = "=== SHOP INFO ===";
+                    message+="\nPlatform: Page is hosted by Shopify.";
+                    message+="\n\n=== PIXEL INSTALLATION ===";
+                    message+="\nPixel Snippet Installation: Triple Pixel is detected.";
+                    message+="\nPixel Version: v2 Thank You Snippet";
+                    message+="\n\n[ Pixel Snippet Installation GOOD ]";
+                }
+            } else if (v1ThankYouSnippetDetected==true) {
+                message = "=== SHOP INFO ===";
+                message+="\nPlatform: Page is Hosted by Shopify.";
+                message+="\n\n=== PIXEL INSTALLATION ===";
+                message+="\nPixel Snippet Installation: Triple Pixel is detected.";
+                message+="\nPixel Version: v1 Thank You Snippet";
+                message+="\n\n[ Pixel Snippet Installation GOOD ]";
+                
+            } else {
+                message = "=== SHOP INFO ===";
+                message+="\nPlatform: Page is hosted by Shopify.";
+                message+="\nShopify Theme: " + ShopifyTheme;
+                message+="\nShopify URL: " + shopifyShop;
+                message+="\n\n=== PIXEL INSTALLATION ===";
+                message+="\nPixel Snippet Installation: Triple Pixel is detected.";
+                message+="\nPixel Version: Pre-v.1.8";
                 message+="\n\n[ Pixel Snippet Installation GOOD ]";
             }
-        } else if (v1ThankYouSnippetDetected==true) {
-            message = "=== SHOP INFO ===";
-            message+="\nShopify Installation: Page is Hosted by Shopify.";
-            message+="\n\n=== PIXEL INSTALLATION ===";
-            message+="\nPixel Snippet Installation: Triple Pixel is detected.";
-            message+="\nPixel Version: v1 Thank You Snippet";
-            message+="\n\n[ Pixel Snippet Installation GOOD ]";
-            
-        } else {
-            message = "=== SHOP INFO ===";
-            message+="\nShopify Installation: Page is hosted by Shopify.";
-            message+="\nShopify Theme: " + ShopifyTheme;
-            message+="\nShopify URL: " + shopifyShop;
-            message+="\n\n=== PIXEL INSTALLATION ===";
-            message+="\nPixel Snippet Installation: Triple Pixel is detected.";
-            message+="\nPixel Version: Pre-v.1.8";
-            message+="\n\n[ Pixel Snippet Installation GOOD ]";
-        }
-    } else if (triplePixelDetected && !shopifyDetected && tripleHeadlessDetected) {
-        if (triplePixelData) {
-            message = "=== SHOP INFO ===";
-            message+="\nShopify Installation: Headless, Third-Party, or Non-Shopify Page.";
-            message+="\n\n=== PIXEL INSTALLATION ===";
-            message+="\nPixel Snippet Installation: Triple Pixel is detected.";
-            message+="\nPixel Version: " + triplePixelVersion;
-            message+="\nSnippet Version: Headless Snippet";
-            message+="\nPixel Shop URL: " + window.TriplePixelData.TripleName;
-            message+="\n\n[ Pixel Snippet Installation GOOD ]";
-        } else if (!triplePixelData && triplePixelState) {
+        } else if (bigCommerceDetected) {
+            if (triplePixelData) {
                 message = "=== SHOP INFO ===";
-                message+="\nShopify Installation: Headless, Third-Party, or Non-Shopify Page.";
+                message+="\nPlatform: BigCommerce";
+                message+="\n\n=== PIXEL INSTALLATION ===";
+                message+="\nPixel Version: " + triplePixelVersion;
+                message+="\nSnippet Version: " +(window.TriplePixelData.isHeadless == false || typeof window.TriplePixelData.isHeadless == 'undefined' ? (triplePixelVersion == '2.14' ? "Theme App Embed" : "Standard Snippet") : "Headless Snippet");
+                message+="\nPixel Shop URL: " + triplePixelShopUrl; 
+                message+="\n\n[ Pixel Snippet Installation " + (tripleHeadlessDetected == true ? "WARNING - Headless snippet used on non-headless page ]" : "GOOD ]");
+            } else if (!triplePixelData && triplePixelState) {
+                if (legacyPixelRequest) {
+                    message = "=== SHOP INFO ===";
+                message+="\nPlatform: BigCommerce.";
                 message+="\n\n=== PIXEL INSTALLATION ===";
                 message+="\nPixel Snippet Installation: Triple Pixel is detected.";
-                message+="\nPixel Version: v2 Thank You Snippet";
+                message+="\nPixel Version: Pre-v1.8";
+                message+="\nSnippet Version: Standard (Legacy .txt Snippet)";
+                message+="\n\n[ Pixel Snippet Installation GOOD ]";
+                } else {
+                    message = "=== SHOP INFO ===";
+                    message+="\nPlatform: Page is hosted by Shopify.";
+                    message+="\n\n=== PIXEL INSTALLATION ===";
+                    message+="\nPixel Snippet Installation: Triple Pixel is detected.";
+                    message+="\nPixel Version: v2 Thank You Snippet";
+                    message+="\n\n[ Pixel Snippet Installation GOOD ]";
+                }
+            } else if (v1ThankYouSnippetDetected==true) {
+                message = "=== SHOP INFO ===";
+                message+="\nPlatform: BigCommerce.";
+                message+="\n\n=== PIXEL INSTALLATION ===";
+                message+="\nPixel Snippet Installation: Triple Pixel is detected.";
+                message+="\nPixel Version: v1 Thank You Snippet";
+                message+="\n\n[ Pixel Snippet Installation GOOD ]";
+                
+            } else {
+                message = "=== SHOP INFO ===";
+                message+="\nPlatform: BigCommerce";
+                message+="\n\n=== PIXEL INSTALLATION ===";
+                message+="\nPixel Snippet Installation: Triple Pixel is detected.";
+                message+="\nPixel Version: Pre-v.1.8";
+                message+="\n\n[ Pixel Snippet Installation GOOD ]";
+            }
+        }
+        
+        } else if (triplePixelDetected && !shopifyDetected && tripleHeadlessDetected && !bigCommerceDetected) {
+            if (triplePixelData) {
+                message = "=== SHOP INFO ===";
+                message+="\nPlatform: Headless/Third-Party";
+                message+="\n\n=== PIXEL INSTALLATION ===";
+                message+="\nPixel Snippet Installation: Triple Pixel is detected.";
+                message+="\nPixel Version: " + triplePixelVersion;
+                message+="\nSnippet Version: Headless Snippet";
+                message+="\nPixel Shop URL: " + window.TriplePixelData.TripleName;
+                message+="\n\n[ Pixel Snippet Installation GOOD ]";
+            } else if (!triplePixelData && triplePixelState) {
+                    message = "=== SHOP INFO ===";
+                    message+="\nPlatform: Headless/Third-Party";
+                    message+="\n\n=== PIXEL INSTALLATION ===";
+                    message+="\nPixel Snippet Installation: Triple Pixel is detected.";
+                    message+="\nPixel Version: v2 Thank You Snippet";
+                    message+="\nHeadless Snippet: Detected.";
+                    message+="\nPixel Shop URL: " + triplePixelShopUrl;
+                    message+="\n\n[ Pixel Snippet Installation GOOD ]";
+            } else {
+                message = "=== SHOP INFO ===";
+                message+="\nPlatform: Headless/Third-Party";
+                message+="\n\n=== PIXEL INSTALLATION ===";
+                message+="\nPixel Snippet Installation: Triple Pixel is detected.";
+                message+="\nPixel Version: Pre-v.1.8";
                 message+="\nHeadless Snippet: Detected.";
-                message+="\nPixel Shop URL: " + triplePixelShopUrl;
+                message+="\nPixel Shop URL (TripleHeadless): " + window.TripleHeadless;
                 message+="\n\n[ Pixel Snippet Installation GOOD ]";
-        } else {
+            }
+        } else if (triplePixelDetected && !shopifyDetected && !tripleHeadlessDetected && !bigCommerceDetected) {
+            if (triplePixelData) {
+                message = "=== SHOP INFO ===";
+                message+="\nPlatform: Headless/Third-Party";
+                message+="\n\n=== PIXEL INSTALLATION ===";
+                message+="\nPixel Snippet Installation: Triple Pixel is detected.";
+                message+="\nPixel Version: " + triplePixelVersion;
+                message+="\nHeadless Snippet: NOT FOUND!!";
+                message+="\n\n[!! Pixel Snippet Installation BAD. Install Headless Snippet. !!]";
+            } else {
+                message = "=== SHOP INFO ===";
+                message+="\nPlatform: Headless/Third-Party";
+                message+="\n\n=== PIXEL INSTALLATION ===";
+                message+="\nPixel Snippet Installation: Triple Pixel is detected.";
+                message+="\nPixel Version: Pre-v.1.8";
+                message+="\nHeadless Snippet: NOT FOUND!!";
+                message+="\n\n[!! Pixel Snippet Installation BAD. Install Headless Snippet. !!]";
+            }
+        } else if (shopifyDetected && !triplePixelDetected) {
             message = "=== SHOP INFO ===";
-            message+="\nShopify Installation: Headless, Third-Party, or Non-Shopify Page.";
+            message+="\nPlatform: Page is hosted by Shopify.";
+            message+="\nShopify Theme: " + ShopifyTheme;
+            message+="\nShopify URL: " + shopifyShop;
             message+="\n\n=== PIXEL INSTALLATION ===";
-            message+="\nPixel Snippet Installation: Triple Pixel is detected.";
-            message+="\nPixel Version: Pre-v.1.8";
-            message+="\nHeadless Snippet: Detected.";
-            message+="\nPixel Shop URL (TripleHeadless): " + window.TripleHeadless;
-            message+="\n\n[ Pixel Snippet Installation GOOD ]";
+            message+="\nPixel Snippet Installation: Triple Pixel is NOT detected!!";
+            message+="\n\n[!! Pixel Snippet Installation BAD. Install Pixel Snippet. !!]";
+        } else if (bigCommerceDetected && !triplePixelDetected) {
+            message = "=== SHOP INFO ===";
+            message+="\nPlatform: BigCommerce";
+            message+="\n\n=== PIXEL INSTALLATION ===";
+            message+="\nPixel Snippet Installation: Triple Pixel is NOT detected!!";
+            message+="\n\n[!! Pixel Snippet Installation BAD. Install Pixel Snippet. !!]";
+        }else if (!shopifyDetected && !triplePixelDetected && !bigCommerceDetected) {
+            message = "=== SHOP INFO ===";
+            message+="\nPlatform: Headless/Third-Party";
+            message+="\n\n=== PIXEL INSTALLATION ===";
+            message+="\nPixel Snippet Installation: Triple Pixel is NOT detected!!";
+            message+="\n\n[!! Pixel Snippet Installation BAD. Install Pixel Snippet. !!]";
         }
-    } else if (triplePixelDetected && !shopifyDetected && !tripleHeadlessDetected) {
-        if (triplePixelData) {
-            message = "=== SHOP INFO ===";
-            message+="\nShopify Installation: Headless, Third-Party, or Non-Shopify Page.";
-            message+="\n\n=== PIXEL INSTALLATION ===";
-            message+="\nPixel Snippet Installation: Triple Pixel is detected.";
-            message+="\nPixel Version: " + triplePixelVersion;
-            message+="\nHeadless Snippet: NOT FOUND!!";
-            message+="\n\n[!! Pixel Snippet Installation BAD. Install Headless Snippet. !!]";
-        } else {
-            message = "=== SHOP INFO ===";
-            message+="\nShopify Installation: Headless, Third-Party, or Non-Shopify Page.";
-            message+="\n\n=== PIXEL INSTALLATION ===";
-            message+="\nPixel Snippet Installation: Triple Pixel is detected.";
-            message+="\nPixel Version: Pre-v.1.8";
-            message+="\nHeadless Snippet: NOT FOUND!!";
-            message+="\n\n[!! Pixel Snippet Installation BAD. Install Headless Snippet. !!]";
-        }
-    } else if (shopifyDetected && !triplePixelDetected) {
-        message = "=== SHOP INFO ===";
-        message+="\nShopify Installation: Page is hosted by Shopify.";
-        message+="\nShopify Theme: " + ShopifyTheme;
-        message+="\nShopify URL: " + shopifyShop;
-        message+="\n\n=== PIXEL INSTALLATION ===";
-        message+="\nPixel Snippet Installation: Triple Pixel is NOT detected!!";
-        message+="\n\n[!! Pixel Snippet Installation BAD. Install Pixel Snippet. !!]";
-    } else if (!shopifyDetected && !triplePixelDetected) {
-        message = "=== SHOP INFO ===";
-        message+="\nShopify Installation: Headless, Third-Party, or Non-Shopify Page.";
-        message+="\n\n=== PIXEL INSTALLATION ===";
-        message+="\nPixel Snippet Installation: Triple Pixel is NOT detected!!";
-        message+="\n\n[!! Pixel Snippet Installation BAD. Install Pixel Snippet. !!]";
-    }
+    
     if (triplePixelState) {
-        message += "\n\n=== PIXEL TRACKING STATUS ===\nPixel Status: " + triplePixelState;
         if (triplePixelV2monkeyIdEndpoint) {
             message+="\nPixel ID Request:\n("+triplePixelV2monkeyIdEndpoint+")\nDetected";
         } else {
