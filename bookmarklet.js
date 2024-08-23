@@ -69,7 +69,6 @@ javascript:(function() {
             if (isDefined(triplePixelPlatform)) {
                 message += `\nPixel Platform: ${triplePixelPlatform}`;
             }
-            
 
             const legacyRequest = detectRequest(endpoints.legacy);
             const v1Request = detectRequest(endpoints.v1);
@@ -86,6 +85,58 @@ javascript:(function() {
             message += "\n\n[!! Pixel Snippet Installation BAD. Install Pixel Snippet. !!]";
         }
 
+        const competitors = ['Northbeam', 'Hyros', 'Rockerbox', 'Cometly'];
+        const urls = ['northbeam', 'hyros', 'getrockerbox', 't.cometlytrack'];
+        const foundCompetitors = [];
+        const adPlatforms = ['Facebook Ads', 'TikTok Ads', 'Snapchat Ads', 'Twitter Ads', 'Bing Ads', 'Google Ads', 'Pinterest Ads', 'Reddit Ads', 'Klaviyo', 'Hubspot', 'Criteo', 'Taboola'];
+        const pixelUrls = [
+            'connect.facebook.net', 'analytics.tiktok.com', 'snap.licdn.com', 'static.ads-twitter.com', 'bat.bing.com',
+            'www.googletagmanager.com', 'pinterest.com/v3/', 'redditstatic.com/ads/pixel.js', 'static.klaviyo.com', 'js.hs-analytics.net', 'criteo.com', 'sync-t1.taboola.com'
+        ];
+        const foundPixels = [];
+        const scripts = document.getElementsByTagName('script');
+        
+        for (let i = 0; i < scripts.length; i++) {
+            const script = scripts[i];
+            for (let j = 0; j < urls.length; j++) {
+                const url = urls[j];
+                if (script.src && script.src.indexOf(url) !== -1) {
+                    if (foundCompetitors.indexOf(competitors[j]) === -1) {
+                        foundCompetitors.push(competitors[j]);
+                    }
+                }
+            }
+        }
+
+        for (let i = 0; i < scripts.length; i++) {
+            const pixel = scripts[i];
+            for (let j = 0; j < pixelUrls.length; j++) {
+                const pixelUrl = pixelUrls[j];
+                if (pixel.src && pixel.src.indexOf(pixelUrl) !== -1) {
+                    if (foundPixels.indexOf(adPlatforms[j]) === -1) {
+                        foundPixels.push(adPlatforms[j]);
+                    }
+                }
+            }
+        }
+
+        if (foundCompetitors.length > 0 || foundPixels.length > 0) {
+            message += "\n\n=== COMPETITORS ===";
+            if (foundCompetitors.length > 0) {
+                message += "\n" + foundCompetitors.join('\n');
+            } else {
+                message += "\nNone found.";
+            }
+            message += "\n\n=== AD PIXELS & MARKETING PLATFORMS ===";
+            if (foundPixels.length > 0) {
+                message += "\n" + foundPixels.join('\n');
+            } else {
+                message += "\nNone found.";
+            }
+        } else {
+            message += "\n\nNo competitors or ad platform pixels found.";
+        }
+
         return message;
     };
 
@@ -93,3 +144,4 @@ javascript:(function() {
     console.log(message);
     alert(message);
 })();
+
