@@ -88,10 +88,10 @@ javascript:(function() {
         const competitors = ['Northbeam', 'Hyros', 'Rockerbox', 'Cometly'];
         const urls = ['northbeam', 'hyros', 'getrockerbox', 't.cometlytrack'];
         const foundCompetitors = [];
-        const adPlatforms = ['Facebook Ads', 'TikTok Ads', 'Snapchat Ads', 'Twitter Ads', 'Bing Ads', 'Google Ads', 'Pinterest Ads', 'Reddit Ads', 'Klaviyo', 'Hubspot', 'Criteo', 'Taboola'];
+        const adPlatforms = ['Facebook Ads', 'TikTok Ads', 'Snapchat Ads', 'Twitter Ads', 'Bing Ads', 'Google Ads', 'Pinterest Ads', 'Reddit Ads', 'Klaviyo', 'Hubspot', 'Criteo', 'Taboola', 'Applovin'];
         const pixelUrls = [
             'connect.facebook.net', 'analytics.tiktok.com', 'snap.licdn.com', 'static.ads-twitter.com', 'bat.bing.com',
-            'www.googletagmanager.com', 'pinterest.com/v3/', 'redditstatic.com/ads/pixel.js', 'static.klaviyo.com', 'js.hs-analytics.net', 'criteo.com', 'sync-t1.taboola.com'
+            'www.googletagmanager.com', 'pinterest.com/v3/', 'redditstatic.com/ads/pixel.js', 'static.klaviyo.com', 'js.hs-analytics.net', 'criteo.com', 'sync-t1.taboola.com', 's.axon.ai'
         ];
         const foundPixels = [];
         const scripts = document.getElementsByTagName('script');
