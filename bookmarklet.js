@@ -14,6 +14,59 @@ javascript:(function() {
         v2Event: "https://api.config-security.com/event"
     };
 
+    const competitors = [
+        { name: 'Northbeam', url: 'northbeam' },
+        { name: 'Hyros', url: 'hyros' },
+        { name: 'Rockerbox', url: 'getrockerbox' },
+        { name: 'Cometly', url: 't.cometlytrack' }
+    ];
+
+    const scripts = document.getElementsByTagName('script');
+
+    const foundCompetitors = [];
+
+    for (let i = 0; i < scripts.length; i++) {
+        const script = scripts[i];
+        for (let j = 0; j < competitors.length; j++) {
+            const url = competitors[j].url;
+            if (script.src && script.src.indexOf(url) !== -1) {
+                if (foundCompetitors.indexOf(competitors[j].name) === -1) {
+                    foundCompetitors.push(competitors[j].name);
+                }
+            }
+        }
+    }
+
+    const foundPixels = [];
+
+    const adPlatforms = [
+        { name: 'Facebook Ads', url: 'connect.facebook.net' },
+        { name: 'TikTok Ads', url: 'analytics.tiktok.com' },
+        { name: 'Snapchat Ads', url: 'snap.licdn.com' },
+        { name: 'Twitter Ads', url: 'static.ads-twitter.com' },
+        { name: 'Bing Ads', url: 'bat.bing.com' },
+        { name: 'Google Ads', url: 'www.googletagmanager.com' },
+        { name: 'Pinterest Ads', url: 'pinterest.com/v3/' },
+        { name: 'Reddit Ads', url: 'redditstatic.com/ads/pixel.js' },
+        { name: 'Klaviyo', url: 'static.klaviyo.com' },
+        { name: 'Hubspot', url: 'js.hs-analytics.net' },
+        { name: 'Criteo', url: 'criteo.com' },
+        { name: 'Taboola', url: 'sync-t1.taboola.com' },
+        { name: 'Applovin', url: 'axon.ai' }
+    ];
+
+    for (let i = 0; i < scripts.length; i++) {
+        const pixel = scripts[i];
+        for (let j = 0; j < adPlatforms.length; j++) {
+            const pixelUrl = adPlatforms[j].url;
+            if (pixel.src && pixel.src.indexOf(pixelUrl) !== -1) {
+                if (foundPixels.indexOf(adPlatforms[j].name) === -1) {
+                    foundPixels.push(adPlatforms[j].name);
+                }
+            }
+        }
+    }  
+
     const platform = {
         shopify: isDefined(window.Shopify),
         shopifyShop: isDefined(window.Shopify) ? window.Shopify.shop : null,
@@ -83,41 +136,6 @@ javascript:(function() {
         } else {
             message += "\n\n=== PIXEL INSTALLATION ===\nPixel Snippet Installation: NOT detected!!";
             message += "\n\n[!! Pixel Snippet Installation BAD. Install Pixel Snippet. !!]";
-        }
-
-        const competitors = ['Northbeam', 'Hyros', 'Rockerbox', 'Cometly'];
-        const urls = ['northbeam', 'hyros', 'getrockerbox', 't.cometlytrack'];
-        const foundCompetitors = [];
-        const adPlatforms = ['Facebook Ads', 'TikTok Ads', 'Snapchat Ads', 'Twitter Ads', 'Bing Ads', 'Google Ads', 'Pinterest Ads', 'Reddit Ads', 'Klaviyo', 'Hubspot', 'Criteo', 'Taboola', 'Applovin'];
-        const pixelUrls = [
-            'connect.facebook.net', 'analytics.tiktok.com', 'snap.licdn.com', 'static.ads-twitter.com', 'bat.bing.com',
-            'www.googletagmanager.com', 'pinterest.com/v3/', 'redditstatic.com/ads/pixel.js', 'static.klaviyo.com', 'js.hs-analytics.net', 'criteo.com', 'sync-t1.taboola.com', 's.axon.ai'
-        ];
-        const foundPixels = [];
-        const scripts = document.getElementsByTagName('script');
-        
-        for (let i = 0; i < scripts.length; i++) {
-            const script = scripts[i];
-            for (let j = 0; j < urls.length; j++) {
-                const url = urls[j];
-                if (script.src && script.src.indexOf(url) !== -1) {
-                    if (foundCompetitors.indexOf(competitors[j]) === -1) {
-                        foundCompetitors.push(competitors[j]);
-                    }
-                }
-            }
-        }
-
-        for (let i = 0; i < scripts.length; i++) {
-            const pixel = scripts[i];
-            for (let j = 0; j < pixelUrls.length; j++) {
-                const pixelUrl = pixelUrls[j];
-                if (pixel.src && pixel.src.indexOf(pixelUrl) !== -1) {
-                    if (foundPixels.indexOf(adPlatforms[j]) === -1) {
-                        foundPixels.push(adPlatforms[j]);
-                    }
-                }
-            }
         }
 
         if (foundCompetitors.length > 0 || foundPixels.length > 0) {
